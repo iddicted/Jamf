@@ -1,0 +1,68 @@
+#!/bin/bash
+#——————————— Changes Site for Computer ———————————
+# gets bearer token and makes api call to Jamf Pro
+# Assigns the computer to the site specified in the xml of the api call (ID + name required)
+# Author: @iddicted
+
+###----------------------------------------------------------------------------------------###
+
+### Custom Variables
+###----------------------------------------------------------------------------------------###
+jamfProURL="$6"
+
+
+### API account Privilege requirements
+# The following Jamf Pro privileges are required:
+# Computers: Update
+# Users: Update
+###----------------------------------------------------------------------------------------###
+
+### API username/pass
+### For now, let's use Jamf policy script parameters we can switch to encrypted script creds later.
+username="$4"
+password="$5"
+computerserial="$(system_profiler SPHardwareDataType | grep 'Serial Number (system)' | awk '{print $NF}')"
+
+#——————————— Authorisation  ———————————
+###----------------------------------------------------------------------------------------###
+# created base64-encoded credentials
+encodedCredentials=$( printf "$username:$password" | /usr/bin/iconv -t ISO-8859-1 | /usr/bin/base64 -i - )
+
+# generate an auth token
+authToken=$( /usr/bin/curl "$jamfProURL/uapi/auth/tokens" \
+--silent \
+--request POST \
+--header "Authorization: Basic $encodedCredentials" )
+
+# parse authToken for token, omit expiration
+token=$( /usr/bin/awk -F \" '{ print $4 }' <<< "$authToken" | /usr/bin/xargs )
+
+
+#——————————— Making the API Call  ———————————
+###----------------------------------------------------------------------------------------###
+# Calling the API
+## Makes use of Bearer Token authentication
+## Parses raw xml data to update site 
+## NOTE: Change Site ID and Name within the xml content
+
+curl $jamfProURL/JSSResource/computers/serialnumber/$computerserial \
+--silent \
+--request PUT \
+--header "Authorization: Bearer $token" \
+--header "Accept: application/json" \
+--header 'Content-Type: application/xml' \
+--data-raw '<computer>
+    <general>
+        <site>
+            <id>1</id>
+            <name>Site Name</name>
+        </site>
+    </general>
+</computer>'
+
+
+# expire the auth token
+/usr/bin/curl "$jamfProURL/uapi/auth/invalidateToken" \
+--silent \
+--request POST \
+--header "Authorization: Bearer $token"

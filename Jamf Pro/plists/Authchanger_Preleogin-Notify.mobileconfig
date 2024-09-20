@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1">
+  <dict>
+    <key>PayloadUUID</key>
+    <string>0FEF0109-F27E-4B4C-9C65-4EE50748CA08</string>
+    <key>PayloadType</key>
+    <string>Configuration</string>
+    <key>PayloadOrganization</key>
+    <string>OrgName</string>
+    <key>PayloadIdentifier</key>
+    <string>0FEF0109-F27E-4B4C-9C65-4EE50748CA08</string>
+    <key>PayloadDisplayName</key>
+    <string>Authchanger_Preleogin-Notify</string>
+    <key>PayloadDescription</key>
+    <string>This plist is read by Jamf Connect during installation. It configures the Notify screen to run before the login window.&#13;It will be removed once the user has logged in.</string>
+    <key>PayloadVersion</key>
+    <integer>1</integer>
+    <key>PayloadEnabled</key>
+    <true/>
+    <key>PayloadRemovalDisallowed</key>
+    <true/>
+    <key>PayloadScope</key>
+    <string>System</string>
+    <key>PayloadContent</key>
+    <array>
+      <dict>
+        <key>PayloadDisplayName</key>
+        <string>Custom Settings</string>
+        <key>PayloadIdentifier</key>
+        <string>9F011AC7-CEEE-4969-9796-430AC176BDA3</string>
+        <key>PayloadOrganization</key>
+        <string>JAMF Software</string>
+        <key>PayloadType</key>
+        <string>com.apple.ManagedClient.preferences</string>
+        <key>PayloadUUID</key>
+        <string>9F011AC7-CEEE-4969-9796-430AC176BDA3</string>
+        <key>PayloadVersion</key>
+        <integer>1</integer>
+        <key>PayloadContent</key>
+        <dict>
+          <key>com.jamf.connect.authchanger</key>
+          <dict>
+            <key>Forced</key>
+            <array>
+              <dict>
+                <key>mcx_preference_settings</key>
+                <dict>
+                  <key>Arguments</key>
+                  <array>
+                    <string>-reset</string>
+                    <string>-jamfconnect</string>
+                    <string>-prelogin</string>
+                    <string>JamfConnectLogin:RunScript,privileged</string>
+                    <string>JamfConnectLogin:Notify</string>
+                  </array>
+                </dict>
+              </dict>
+            </array>
+          </dict>
+        </dict>
+      </dict>
+    </array>
+  </dict>
+</plist>
