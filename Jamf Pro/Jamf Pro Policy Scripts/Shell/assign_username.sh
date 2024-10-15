@@ -3,24 +3,24 @@
 
 # read the short name of last user logged in and flow it up to the computer record in JSS
 
-sFinalUserName=""
+FinalUserName=""
 
 # read the short name of last user logged in
-sLastUser="$( /usr/bin/defaults read /Library/Preferences/com.apple.loginwindow lastUserName )"
+LastUser="$( /usr/bin/defaults read /Library/Preferences/com.apple.loginwindow lastUserName )"
 
 # try to get network user name (available with Jamf Connect, not with NoMAD Pro)
-sNetworkUser="$( /usr/bin/dscl -plist . -read "/Users/${sLastUser}" "dsAttrTypeStandard:NetworkUser" | /usr/bin/xpath "//string[1]/text()" 2>/dev/null )"
+NetworkUser="$( /usr/bin/dscl -plist . -read "/Users/${LastUser}" "dsAttrTypeStandard:NetworkUser" | /usr/bin/xpath -e"//string[1]/text()" 2>/dev/null )"
 
 # prefer NetworkUser if available
-if [[ -n "${sNetworkUser}" ]]; then
-	sFinalUserName=${sNetworkUser}
+if [[ -n "${NetworkUser}" ]]; then
+	FinalUserName=${NetworkUser}
 else
-	sFinalUserName=${sLastUser}
+	FinalUserName=${LastUser}
 fi
-echo "Determined user name as ${sFinalUserName}."
+echo "Determined user name as ${FinalUserName}."
 
 # push it to jamf
-jamf recon -endUsername "${sFinalUserName}" \
+jamf recon -endUsername "${FinalUserName}" \
 	&& echo "Sent inventory and username to Jamf Pro" \
 	|| echo "Error sending inventory and username to Jamf Pro"
 
