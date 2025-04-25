@@ -9,7 +9,7 @@ FinalUserName=""
 LastUser="$( /usr/bin/defaults read /Library/Preferences/com.apple.loginwindow lastUserName )"
 
 # try to get network user name (available with Jamf Connect, not with NoMAD Pro)
-NetworkUser="$( /usr/bin/dscl -plist . -read "/Users/${LastUser}" "dsAttrTypeStandard:NetworkUser" | /usr/bin/xpath -e"//string[1]/text()" 2>/dev/null )"
+NetworkUser="$( /usr/bin/dscl . -read /Users/${LastUser} | grep "NetworkUser" | awk -F': ' '{print $2}' )"
 
 # prefer NetworkUser if available
 if [[ -n "${NetworkUser}" ]]; then
